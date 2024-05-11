@@ -3,6 +3,10 @@ use colored::*;
 use dialoguer::{theme::ColorfulTheme, Confirm};
 use duct::cmd;
 use std::{env, process::exit};
+
+const SPEC_LOCATION: &str = "/etc/specialisation";
+const CURRENT_PROFILE: &str = "/run/current-system";
+
 /// Simple wrapper around various nix tools.
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
@@ -26,6 +30,8 @@ enum Commands {
     Analyse,
     /// Optimises nix store
     Optimise,
+    /// (Re)Builds system and switches
+    Switch,
 }
 fn print_result(output: Result<std::process::Output, std::io::Error>, msg: &str) {
     match output {
@@ -47,7 +53,26 @@ fn print_result(output: Result<std::process::Output, std::io::Error>, msg: &str)
         }
     }
 }
-
+fn build() {
+    let out_dir = tempfile::Builder::new().prefix("nh-os-").tempdir().unwrap();
+    let out_dir_str = out_dir.path().to_str().unwrap();
+    // duct_sh::sh_dangerous(format!("mkdir {}", &out_dir_str))
+    // .run()
+    // .unwrap();
+    if let Err(err) = env::set_current_dir(format!("{}", &out_dir_str)) {
+        eprintln!("Error: {}", err);
+        return;
+    }
+    print_result(
+        duct_sh::sh("nixos-rebuild build \"$@\" --log-format internal-json |& nom --json ").run(),
+        "Built successfully",
+    );
+    print_result(duct_sh::sh("nvd diff /run/current-system result").run(), "");
+    if let Err(err) = env::set_current_dir("/etc/nixos/") {
+        eprintln!("Error: {}", err);
+        return;
+    }
+}
 fn main() {
     let cli = Args::parse();
     if let Err(err) = env::set_current_dir("/etc/nixos/") {
@@ -102,18 +127,27 @@ fn main() {
                 cmd!("sudo", "nix", "flake", "update").run(),
                 "Flake.lock updated",
             );
-
-            print_result(
-                cmd!("sudo", "nixos-rebuild", "switch", "--upgrade").run(),
-                "System upgrade complete",
-            );
+            build();
+            // print_result(
+            //     cmd!("sudo", "nixos-rebuild", "switch", "--upgrade").run(),
+            //     "System upgrade complete",
+            // );
         }
         Commands::Build => {
+            build();
+            // print_result(
+            //     cmd!("sudo", "nixos-rebuild", "switch").run(),
+            //     "System build complete",
+            // );
+        }
+        Commands::Switch => {
+            build();
             print_result(
                 cmd!("sudo", "nixos-rebuild", "switch").run(),
-                "System build complete",
+                "Configuration switched!",
             );
         }
+
         Commands::Analyse => {
             duct_sh::sh(
                 "nix-shell -p gnome.eog graphviz nix-du --command '

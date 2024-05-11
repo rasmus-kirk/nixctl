@@ -30,6 +30,9 @@ _nixctl() {
             nixctl,purge)
                 cmd="nixctl__purge"
                 ;;
+            nixctl,switch)
+                cmd="nixctl__switch"
+                ;;
             nixctl,update)
                 cmd="nixctl__update"
                 ;;
@@ -54,6 +57,9 @@ _nixctl() {
             nixctl__help,purge)
                 cmd="nixctl__help__purge"
                 ;;
+            nixctl__help,switch)
+                cmd="nixctl__help__switch"
+                ;;
             nixctl__help,update)
                 cmd="nixctl__help__update"
                 ;;
@@ -67,7 +73,7 @@ _nixctl() {
 
     case "${cmd}" in
         nixctl)
-            opts="-h -V --help --version clean purge update upgrade build analyse optimise help"
+            opts="-h -V --help --version clean purge update upgrade build analyse optimise switch help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -123,7 +129,7 @@ _nixctl() {
             return 0
             ;;
         nixctl__help)
-            opts="clean purge update upgrade build analyse optimise help"
+            opts="clean purge update upgrade build analyse optimise switch help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -220,6 +226,20 @@ _nixctl() {
             COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
             return 0
             ;;
+        nixctl__help__switch)
+            opts=""
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
         nixctl__help__update)
             opts=""
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
@@ -263,6 +283,20 @@ _nixctl() {
             return 0
             ;;
         nixctl__purge)
+            opts="-h --help"
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
+        nixctl__switch)
             opts="-h --help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )

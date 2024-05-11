@@ -230,6 +230,7 @@ dependencies = [
  "dialoguer",
  "duct",
  "duct_sh",
+ "tempfile",
 ]
 
 [[package]]

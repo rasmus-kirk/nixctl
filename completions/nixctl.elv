@@ -29,6 +29,7 @@ set edit:completion:arg-completer[nixctl] = {|@words|
             cand build '(Re)Builds system'
             cand analyse 'Analyses storage usage of nix store'
             cand optimise 'Optimises nix store'
+            cand switch '(Re)Builds system and switches'
             cand help 'Print this message or the help of the given subcommand(s)'
         }
         &'nixctl;clean'= {
@@ -59,6 +60,10 @@ set edit:completion:arg-completer[nixctl] = {|@words|
             cand -h 'Print help'
             cand --help 'Print help'
         }
+        &'nixctl;switch'= {
+            cand -h 'Print help'
+            cand --help 'Print help'
+        }
         &'nixctl;help'= {
             cand clean 'Removes unsed files from nix store'
             cand purge 'Deletes all previous generations from nix store'
@@ -67,6 +72,7 @@ set edit:completion:arg-completer[nixctl] = {|@words|
             cand build '(Re)Builds system'
             cand analyse 'Analyses storage usage of nix store'
             cand optimise 'Optimises nix store'
+            cand switch '(Re)Builds system and switches'
             cand help 'Print this message or the help of the given subcommand(s)'
         }
         &'nixctl;help;clean'= {
@@ -82,6 +88,8 @@ set edit:completion:arg-completer[nixctl] = {|@words|
         &'nixctl;help;analyse'= {
         }
         &'nixctl;help;optimise'= {
+        }
+        &'nixctl;help;switch'= {
         }
         &'nixctl;help;help'= {
         }

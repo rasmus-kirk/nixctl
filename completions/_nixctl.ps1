@@ -32,6 +32,7 @@ Register-ArgumentCompleter -Native -CommandName 'nixctl' -ScriptBlock {
             [CompletionResult]::new('build', 'build', [CompletionResultType]::ParameterValue, '(Re)Builds system')
             [CompletionResult]::new('analyse', 'analyse', [CompletionResultType]::ParameterValue, 'Analyses storage usage of nix store')
             [CompletionResult]::new('optimise', 'optimise', [CompletionResultType]::ParameterValue, 'Optimises nix store')
+            [CompletionResult]::new('switch', 'switch', [CompletionResultType]::ParameterValue, '(Re)Builds system and switches')
             [CompletionResult]::new('help', 'help', [CompletionResultType]::ParameterValue, 'Print this message or the help of the given subcommand(s)')
             break
         }
@@ -70,6 +71,11 @@ Register-ArgumentCompleter -Native -CommandName 'nixctl' -ScriptBlock {
             [CompletionResult]::new('--help', 'help', [CompletionResultType]::ParameterName, 'Print help')
             break
         }
+        'nixctl;switch' {
+            [CompletionResult]::new('-h', 'h', [CompletionResultType]::ParameterName, 'Print help')
+            [CompletionResult]::new('--help', 'help', [CompletionResultType]::ParameterName, 'Print help')
+            break
+        }
         'nixctl;help' {
             [CompletionResult]::new('clean', 'clean', [CompletionResultType]::ParameterValue, 'Removes unsed files from nix store')
             [CompletionResult]::new('purge', 'purge', [CompletionResultType]::ParameterValue, 'Deletes all previous generations from nix store')
@@ -78,6 +84,7 @@ Register-ArgumentCompleter -Native -CommandName 'nixctl' -ScriptBlock {
             [CompletionResult]::new('build', 'build', [CompletionResultType]::ParameterValue, '(Re)Builds system')
             [CompletionResult]::new('analyse', 'analyse', [CompletionResultType]::ParameterValue, 'Analyses storage usage of nix store')
             [CompletionResult]::new('optimise', 'optimise', [CompletionResultType]::ParameterValue, 'Optimises nix store')
+            [CompletionResult]::new('switch', 'switch', [CompletionResultType]::ParameterValue, '(Re)Builds system and switches')
             [CompletionResult]::new('help', 'help', [CompletionResultType]::ParameterValue, 'Print this message or the help of the given subcommand(s)')
             break
         }
@@ -100,6 +107,9 @@ Register-ArgumentCompleter -Native -CommandName 'nixctl' -ScriptBlock {
             break
         }
         'nixctl;help;optimise' {
+            break
+        }
+        'nixctl;help;switch' {
             break
         }
         'nixctl;help;help' {

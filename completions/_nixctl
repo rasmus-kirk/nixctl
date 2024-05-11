@@ -70,6 +70,12 @@ _arguments "${_arguments_options[@]}" \
 '--help[Print help]' \
 && ret=0
 ;;
+(switch)
+_arguments "${_arguments_options[@]}" \
+'-h[Print help]' \
+'--help[Print help]' \
+&& ret=0
+;;
 (help)
 _arguments "${_arguments_options[@]}" \
 ":: :_nixctl__help_commands" \
@@ -110,6 +116,10 @@ _arguments "${_arguments_options[@]}" \
 _arguments "${_arguments_options[@]}" \
 && ret=0
 ;;
+(switch)
+_arguments "${_arguments_options[@]}" \
+&& ret=0
+;;
 (help)
 _arguments "${_arguments_options[@]}" \
 && ret=0
@@ -133,6 +143,7 @@ _nixctl_commands() {
 'build:(Re)Builds system' \
 'analyse:Analyses storage usage of nix store' \
 'optimise:Optimises nix store' \
+'switch:(Re)Builds system and switches' \
 'help:Print this message or the help of the given subcommand(s)' \
     )
     _describe -t commands 'nixctl commands' commands "$@"
@@ -177,6 +188,7 @@ _nixctl__help_commands() {
 'build:(Re)Builds system' \
 'analyse:Analyses storage usage of nix store' \
 'optimise:Optimises nix store' \
+'switch:(Re)Builds system and switches' \
 'help:Print this message or the help of the given subcommand(s)' \
     )
     _describe -t commands 'nixctl help commands' commands "$@"
@@ -205,6 +217,16 @@ _nixctl__help__purge_commands() {
 _nixctl__purge_commands() {
     local commands; commands=()
     _describe -t commands 'nixctl purge commands' commands "$@"
+}
+(( $+functions[_nixctl__help__switch_commands] )) ||
+_nixctl__help__switch_commands() {
+    local commands; commands=()
+    _describe -t commands 'nixctl help switch commands' commands "$@"
+}
+(( $+functions[_nixctl__switch_commands] )) ||
+_nixctl__switch_commands() {
+    local commands; commands=()
+    _describe -t commands 'nixctl switch commands' commands "$@"
 }
 (( $+functions[_nixctl__help__update_commands] )) ||
 _nixctl__help__update_commands() {
