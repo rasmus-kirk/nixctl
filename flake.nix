@@ -32,10 +32,6 @@
               lockFile = ./Cargo.lock;
             };
             nativeBuildInputs = [pkgs.installShellFiles];
-            buildInputs = with pkgs; [
-              nvd
-              nix-output-monitor
-            ];
             postInstall = ''
               installShellCompletion --cmd nixctl \
                 --bash completions/nixctl.bash \
