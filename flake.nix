@@ -23,7 +23,7 @@
               nix-output-monitor
             ];
           };
-        packages = {
+        packages = rec {
           nixctl = pkgs.rustPlatform.buildRustPackage rec {
             name = "nixctl";
             version = "1.0.0";
@@ -31,6 +31,7 @@
             cargoLock = {
               lockFile = ./Cargo.lock;
             };
+            runtimeDeps = with pkgs; [nvd nix-output-monitor];
             nativeBuildInputs = [pkgs.installShellFiles];
             postInstall = ''
               installShellCompletion --cmd nixctl \
@@ -39,7 +40,16 @@
                 --zsh completions/_nixctl
             '';
           };
-          default = packages.nixctl;
+          combinedPackages = pkgs.symlinkJoin {
+            name = "combined-packages";
+            paths = [
+              pkgs.nvd
+              pkgs.nix-output-monitor
+              nixctl
+            ];
+          };
+
+          default = packages.combinedPackages;
         };
       }
     );
