@@ -31,7 +31,7 @@
             cargoLock = {
               lockFile = ./Cargo.lock;
             };
-            runtimeDeps = with pkgs; [nvd nix-output-monitor];
+            runtimeDeps = with pkgs; [nvd nix-output-monitor gnome.eog graphviz nix-du];
             nativeBuildInputs = [pkgs.installShellFiles];
             postInstall = ''
               installShellCompletion --cmd nixctl \
@@ -46,6 +46,9 @@
               pkgs.nvd
               pkgs.nix-output-monitor
               nixctl
+              pkgs.gnome.eog
+              pkgs.graphviz
+              pkgs.nix-du
             ];
           };
 
