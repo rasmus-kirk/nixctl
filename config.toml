@@ -1,0 +1,4 @@
+debug = true
+config_dir = "/home/user/.system-configuration"
+machine = "work"
+

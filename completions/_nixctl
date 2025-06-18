@@ -15,6 +15,11 @@ _nixctl() {
 
     local context curcontext="$curcontext" state line
     _arguments "${_arguments_options[@]}" \
+'--machine=[]:MACHINE: ' \
+'--config-dir=[]:CONFIG_DIR:_files' \
+'--nixctl-config-file=[]:NIXCTL_CONFIG_FILE:_files' \
+'--impure[]' \
+'--debug[]' \
 '-h[Print help]' \
 '--help[Print help]' \
 '-V[Print version]' \
@@ -28,13 +33,21 @@ _nixctl() {
         (( CURRENT += 1 ))
         curcontext="${curcontext%:*:*}:nixctl-command-$line[1]:"
         case $line[1] in
-            (clean)
+            (home-manager)
 _arguments "${_arguments_options[@]}" \
 '-h[Print help]' \
 '--help[Print help]' \
+":: :_nixctl__home-manager_commands" \
+"*::: :->home-manager" \
 && ret=0
-;;
-(purge)
+
+    case $state in
+    (home-manager)
+        words=($line[1] "${words[@]}")
+        (( CURRENT += 1 ))
+        curcontext="${curcontext%:*:*}:nixctl-home-manager-command-$line[1]:"
+        case $line[1] in
+            (clean)
 _arguments "${_arguments_options[@]}" \
 '-h[Print help]' \
 '--help[Print help]' \
@@ -52,29 +65,189 @@ _arguments "${_arguments_options[@]}" \
 '--help[Print help]' \
 && ret=0
 ;;
-(build)
+(options)
 _arguments "${_arguments_options[@]}" \
 '-h[Print help]' \
 '--help[Print help]' \
 && ret=0
 ;;
-(analyse)
+(rebuild)
 _arguments "${_arguments_options[@]}" \
 '-h[Print help]' \
 '--help[Print help]' \
 && ret=0
 ;;
-(optimise)
+(rollback)
 _arguments "${_arguments_options[@]}" \
 '-h[Print help]' \
 '--help[Print help]' \
 && ret=0
 ;;
-(switch)
+(test)
 _arguments "${_arguments_options[@]}" \
 '-h[Print help]' \
 '--help[Print help]' \
 && ret=0
+;;
+(help)
+_arguments "${_arguments_options[@]}" \
+":: :_nixctl__home-manager__help_commands" \
+"*::: :->help" \
+&& ret=0
+
+    case $state in
+    (help)
+        words=($line[1] "${words[@]}")
+        (( CURRENT += 1 ))
+        curcontext="${curcontext%:*:*}:nixctl-home-manager-help-command-$line[1]:"
+        case $line[1] in
+            (clean)
+_arguments "${_arguments_options[@]}" \
+&& ret=0
+;;
+(update)
+_arguments "${_arguments_options[@]}" \
+&& ret=0
+;;
+(upgrade)
+_arguments "${_arguments_options[@]}" \
+&& ret=0
+;;
+(options)
+_arguments "${_arguments_options[@]}" \
+&& ret=0
+;;
+(rebuild)
+_arguments "${_arguments_options[@]}" \
+&& ret=0
+;;
+(rollback)
+_arguments "${_arguments_options[@]}" \
+&& ret=0
+;;
+(test)
+_arguments "${_arguments_options[@]}" \
+&& ret=0
+;;
+(help)
+_arguments "${_arguments_options[@]}" \
+&& ret=0
+;;
+        esac
+    ;;
+esac
+;;
+        esac
+    ;;
+esac
+;;
+(nix-os)
+_arguments "${_arguments_options[@]}" \
+'-h[Print help]' \
+'--help[Print help]' \
+":: :_nixctl__nix-os_commands" \
+"*::: :->nix-os" \
+&& ret=0
+
+    case $state in
+    (nix-os)
+        words=($line[1] "${words[@]}")
+        (( CURRENT += 1 ))
+        curcontext="${curcontext%:*:*}:nixctl-nix-os-command-$line[1]:"
+        case $line[1] in
+            (clean)
+_arguments "${_arguments_options[@]}" \
+'-h[Print help]' \
+'--help[Print help]' \
+&& ret=0
+;;
+(update)
+_arguments "${_arguments_options[@]}" \
+'-h[Print help]' \
+'--help[Print help]' \
+&& ret=0
+;;
+(upgrade)
+_arguments "${_arguments_options[@]}" \
+'-h[Print help]' \
+'--help[Print help]' \
+&& ret=0
+;;
+(options)
+_arguments "${_arguments_options[@]}" \
+'-h[Print help]' \
+'--help[Print help]' \
+&& ret=0
+;;
+(rebuild)
+_arguments "${_arguments_options[@]}" \
+'-h[Print help]' \
+'--help[Print help]' \
+&& ret=0
+;;
+(rollback)
+_arguments "${_arguments_options[@]}" \
+'-h[Print help]' \
+'--help[Print help]' \
+&& ret=0
+;;
+(test)
+_arguments "${_arguments_options[@]}" \
+'-h[Print help]' \
+'--help[Print help]' \
+&& ret=0
+;;
+(help)
+_arguments "${_arguments_options[@]}" \
+":: :_nixctl__nix-os__help_commands" \
+"*::: :->help" \
+&& ret=0
+
+    case $state in
+    (help)
+        words=($line[1] "${words[@]}")
+        (( CURRENT += 1 ))
+        curcontext="${curcontext%:*:*}:nixctl-nix-os-help-command-$line[1]:"
+        case $line[1] in
+            (clean)
+_arguments "${_arguments_options[@]}" \
+&& ret=0
+;;
+(update)
+_arguments "${_arguments_options[@]}" \
+&& ret=0
+;;
+(upgrade)
+_arguments "${_arguments_options[@]}" \
+&& ret=0
+;;
+(options)
+_arguments "${_arguments_options[@]}" \
+&& ret=0
+;;
+(rebuild)
+_arguments "${_arguments_options[@]}" \
+&& ret=0
+;;
+(rollback)
+_arguments "${_arguments_options[@]}" \
+&& ret=0
+;;
+(test)
+_arguments "${_arguments_options[@]}" \
+&& ret=0
+;;
+(help)
+_arguments "${_arguments_options[@]}" \
+&& ret=0
+;;
+        esac
+    ;;
+esac
+;;
+        esac
+    ;;
+esac
 ;;
 (help)
 _arguments "${_arguments_options[@]}" \
@@ -88,11 +261,19 @@ _arguments "${_arguments_options[@]}" \
         (( CURRENT += 1 ))
         curcontext="${curcontext%:*:*}:nixctl-help-command-$line[1]:"
         case $line[1] in
-            (clean)
+            (home-manager)
 _arguments "${_arguments_options[@]}" \
+":: :_nixctl__help__home-manager_commands" \
+"*::: :->home-manager" \
 && ret=0
-;;
-(purge)
+
+    case $state in
+    (home-manager)
+        words=($line[1] "${words[@]}")
+        (( CURRENT += 1 ))
+        curcontext="${curcontext%:*:*}:nixctl-help-home-manager-command-$line[1]:"
+        case $line[1] in
+            (clean)
 _arguments "${_arguments_options[@]}" \
 && ret=0
 ;;
@@ -104,21 +285,69 @@ _arguments "${_arguments_options[@]}" \
 _arguments "${_arguments_options[@]}" \
 && ret=0
 ;;
-(build)
+(options)
 _arguments "${_arguments_options[@]}" \
 && ret=0
 ;;
-(analyse)
+(rebuild)
 _arguments "${_arguments_options[@]}" \
 && ret=0
 ;;
-(optimise)
+(rollback)
 _arguments "${_arguments_options[@]}" \
 && ret=0
 ;;
-(switch)
+(test)
 _arguments "${_arguments_options[@]}" \
 && ret=0
+;;
+        esac
+    ;;
+esac
+;;
+(nix-os)
+_arguments "${_arguments_options[@]}" \
+":: :_nixctl__help__nix-os_commands" \
+"*::: :->nix-os" \
+&& ret=0
+
+    case $state in
+    (nix-os)
+        words=($line[1] "${words[@]}")
+        (( CURRENT += 1 ))
+        curcontext="${curcontext%:*:*}:nixctl-help-nix-os-command-$line[1]:"
+        case $line[1] in
+            (clean)
+_arguments "${_arguments_options[@]}" \
+&& ret=0
+;;
+(update)
+_arguments "${_arguments_options[@]}" \
+&& ret=0
+;;
+(upgrade)
+_arguments "${_arguments_options[@]}" \
+&& ret=0
+;;
+(options)
+_arguments "${_arguments_options[@]}" \
+&& ret=0
+;;
+(rebuild)
+_arguments "${_arguments_options[@]}" \
+&& ret=0
+;;
+(rollback)
+_arguments "${_arguments_options[@]}" \
+&& ret=0
+;;
+(test)
+_arguments "${_arguments_options[@]}" \
+&& ret=0
+;;
+        esac
+    ;;
+esac
 ;;
 (help)
 _arguments "${_arguments_options[@]}" \
@@ -136,59 +365,47 @@ esac
 (( $+functions[_nixctl_commands] )) ||
 _nixctl_commands() {
     local commands; commands=(
-'clean:Removes unsed files from nix store' \
-'purge:Deletes all previous generations from nix store' \
-'update:Updates flake.lock' \
-'upgrade:Upgrades system (also updates flake.lock)' \
-'build:(Re)Builds system' \
-'analyse:Analyses storage usage of nix store' \
-'optimise:Optimises nix store' \
-'switch:(Re)Builds system and switches' \
+'home-manager:Operate Home Manager' \
+'nix-os:Operate NixOS' \
 'help:Print this message or the help of the given subcommand(s)' \
     )
     _describe -t commands 'nixctl commands' commands "$@"
 }
-(( $+functions[_nixctl__analyse_commands] )) ||
-_nixctl__analyse_commands() {
+(( $+functions[_nixctl__help__home-manager__clean_commands] )) ||
+_nixctl__help__home-manager__clean_commands() {
     local commands; commands=()
-    _describe -t commands 'nixctl analyse commands' commands "$@"
+    _describe -t commands 'nixctl help home-manager clean commands' commands "$@"
 }
-(( $+functions[_nixctl__help__analyse_commands] )) ||
-_nixctl__help__analyse_commands() {
+(( $+functions[_nixctl__help__nix-os__clean_commands] )) ||
+_nixctl__help__nix-os__clean_commands() {
     local commands; commands=()
-    _describe -t commands 'nixctl help analyse commands' commands "$@"
+    _describe -t commands 'nixctl help nix-os clean commands' commands "$@"
 }
-(( $+functions[_nixctl__build_commands] )) ||
-_nixctl__build_commands() {
+(( $+functions[_nixctl__home-manager__clean_commands] )) ||
+_nixctl__home-manager__clean_commands() {
     local commands; commands=()
-    _describe -t commands 'nixctl build commands' commands "$@"
+    _describe -t commands 'nixctl home-manager clean commands' commands "$@"
 }
-(( $+functions[_nixctl__help__build_commands] )) ||
-_nixctl__help__build_commands() {
+(( $+functions[_nixctl__home-manager__help__clean_commands] )) ||
+_nixctl__home-manager__help__clean_commands() {
     local commands; commands=()
-    _describe -t commands 'nixctl help build commands' commands "$@"
+    _describe -t commands 'nixctl home-manager help clean commands' commands "$@"
 }
-(( $+functions[_nixctl__clean_commands] )) ||
-_nixctl__clean_commands() {
+(( $+functions[_nixctl__nix-os__clean_commands] )) ||
+_nixctl__nix-os__clean_commands() {
     local commands; commands=()
-    _describe -t commands 'nixctl clean commands' commands "$@"
+    _describe -t commands 'nixctl nix-os clean commands' commands "$@"
 }
-(( $+functions[_nixctl__help__clean_commands] )) ||
-_nixctl__help__clean_commands() {
+(( $+functions[_nixctl__nix-os__help__clean_commands] )) ||
+_nixctl__nix-os__help__clean_commands() {
     local commands; commands=()
-    _describe -t commands 'nixctl help clean commands' commands "$@"
+    _describe -t commands 'nixctl nix-os help clean commands' commands "$@"
 }
 (( $+functions[_nixctl__help_commands] )) ||
 _nixctl__help_commands() {
     local commands; commands=(
-'clean:Removes unsed files from nix store' \
-'purge:Deletes all previous generations from nix store' \
-'update:Updates flake.lock' \
-'upgrade:Upgrades system (also updates flake.lock)' \
-'build:(Re)Builds system' \
-'analyse:Analyses storage usage of nix store' \
-'optimise:Optimises nix store' \
-'switch:(Re)Builds system and switches' \
+'home-manager:Operate Home Manager' \
+'nix-os:Operate NixOS' \
 'help:Print this message or the help of the given subcommand(s)' \
     )
     _describe -t commands 'nixctl help commands' commands "$@"
@@ -198,55 +415,277 @@ _nixctl__help__help_commands() {
     local commands; commands=()
     _describe -t commands 'nixctl help help commands' commands "$@"
 }
-(( $+functions[_nixctl__help__optimise_commands] )) ||
-_nixctl__help__optimise_commands() {
-    local commands; commands=()
-    _describe -t commands 'nixctl help optimise commands' commands "$@"
+(( $+functions[_nixctl__home-manager__help_commands] )) ||
+_nixctl__home-manager__help_commands() {
+    local commands; commands=(
+'clean:Removes unsed files from nix store' \
+'update:Updates flake.lock' \
+'upgrade:Upgrades system (also updates flake.lock)' \
+'options:Show configuration options' \
+'rebuild:rebuild' \
+'rollback:rollback' \
+'test:test' \
+'help:Print this message or the help of the given subcommand(s)' \
+    )
+    _describe -t commands 'nixctl home-manager help commands' commands "$@"
 }
-(( $+functions[_nixctl__optimise_commands] )) ||
-_nixctl__optimise_commands() {
+(( $+functions[_nixctl__home-manager__help__help_commands] )) ||
+_nixctl__home-manager__help__help_commands() {
     local commands; commands=()
-    _describe -t commands 'nixctl optimise commands' commands "$@"
+    _describe -t commands 'nixctl home-manager help help commands' commands "$@"
 }
-(( $+functions[_nixctl__help__purge_commands] )) ||
-_nixctl__help__purge_commands() {
-    local commands; commands=()
-    _describe -t commands 'nixctl help purge commands' commands "$@"
+(( $+functions[_nixctl__nix-os__help_commands] )) ||
+_nixctl__nix-os__help_commands() {
+    local commands; commands=(
+'clean:Removes unsed files from nix store' \
+'update:Updates flake.lock' \
+'upgrade:Upgrades system (also updates flake.lock)' \
+'options:Show configuration options' \
+'rebuild:rebuild' \
+'rollback:rollback' \
+'test:test' \
+'help:Print this message or the help of the given subcommand(s)' \
+    )
+    _describe -t commands 'nixctl nix-os help commands' commands "$@"
 }
-(( $+functions[_nixctl__purge_commands] )) ||
-_nixctl__purge_commands() {
+(( $+functions[_nixctl__nix-os__help__help_commands] )) ||
+_nixctl__nix-os__help__help_commands() {
     local commands; commands=()
-    _describe -t commands 'nixctl purge commands' commands "$@"
+    _describe -t commands 'nixctl nix-os help help commands' commands "$@"
 }
-(( $+functions[_nixctl__help__switch_commands] )) ||
-_nixctl__help__switch_commands() {
-    local commands; commands=()
-    _describe -t commands 'nixctl help switch commands' commands "$@"
+(( $+functions[_nixctl__help__home-manager_commands] )) ||
+_nixctl__help__home-manager_commands() {
+    local commands; commands=(
+'clean:Removes unsed files from nix store' \
+'update:Updates flake.lock' \
+'upgrade:Upgrades system (also updates flake.lock)' \
+'options:Show configuration options' \
+'rebuild:rebuild' \
+'rollback:rollback' \
+'test:test' \
+    )
+    _describe -t commands 'nixctl help home-manager commands' commands "$@"
 }
-(( $+functions[_nixctl__switch_commands] )) ||
-_nixctl__switch_commands() {
-    local commands; commands=()
-    _describe -t commands 'nixctl switch commands' commands "$@"
+(( $+functions[_nixctl__home-manager_commands] )) ||
+_nixctl__home-manager_commands() {
+    local commands; commands=(
+'clean:Removes unsed files from nix store' \
+'update:Updates flake.lock' \
+'upgrade:Upgrades system (also updates flake.lock)' \
+'options:Show configuration options' \
+'rebuild:rebuild' \
+'rollback:rollback' \
+'test:test' \
+'help:Print this message or the help of the given subcommand(s)' \
+    )
+    _describe -t commands 'nixctl home-manager commands' commands "$@"
 }
-(( $+functions[_nixctl__help__update_commands] )) ||
-_nixctl__help__update_commands() {
-    local commands; commands=()
-    _describe -t commands 'nixctl help update commands' commands "$@"
+(( $+functions[_nixctl__help__nix-os_commands] )) ||
+_nixctl__help__nix-os_commands() {
+    local commands; commands=(
+'clean:Removes unsed files from nix store' \
+'update:Updates flake.lock' \
+'upgrade:Upgrades system (also updates flake.lock)' \
+'options:Show configuration options' \
+'rebuild:rebuild' \
+'rollback:rollback' \
+'test:test' \
+    )
+    _describe -t commands 'nixctl help nix-os commands' commands "$@"
 }
-(( $+functions[_nixctl__update_commands] )) ||
-_nixctl__update_commands() {
-    local commands; commands=()
-    _describe -t commands 'nixctl update commands' commands "$@"
+(( $+functions[_nixctl__nix-os_commands] )) ||
+_nixctl__nix-os_commands() {
+    local commands; commands=(
+'clean:Removes unsed files from nix store' \
+'update:Updates flake.lock' \
+'upgrade:Upgrades system (also updates flake.lock)' \
+'options:Show configuration options' \
+'rebuild:rebuild' \
+'rollback:rollback' \
+'test:test' \
+'help:Print this message or the help of the given subcommand(s)' \
+    )
+    _describe -t commands 'nixctl nix-os commands' commands "$@"
 }
-(( $+functions[_nixctl__help__upgrade_commands] )) ||
-_nixctl__help__upgrade_commands() {
+(( $+functions[_nixctl__help__home-manager__options_commands] )) ||
+_nixctl__help__home-manager__options_commands() {
     local commands; commands=()
-    _describe -t commands 'nixctl help upgrade commands' commands "$@"
+    _describe -t commands 'nixctl help home-manager options commands' commands "$@"
 }
-(( $+functions[_nixctl__upgrade_commands] )) ||
-_nixctl__upgrade_commands() {
+(( $+functions[_nixctl__help__nix-os__options_commands] )) ||
+_nixctl__help__nix-os__options_commands() {
     local commands; commands=()
-    _describe -t commands 'nixctl upgrade commands' commands "$@"
+    _describe -t commands 'nixctl help nix-os options commands' commands "$@"
+}
+(( $+functions[_nixctl__home-manager__help__options_commands] )) ||
+_nixctl__home-manager__help__options_commands() {
+    local commands; commands=()
+    _describe -t commands 'nixctl home-manager help options commands' commands "$@"
+}
+(( $+functions[_nixctl__home-manager__options_commands] )) ||
+_nixctl__home-manager__options_commands() {
+    local commands; commands=()
+    _describe -t commands 'nixctl home-manager options commands' commands "$@"
+}
+(( $+functions[_nixctl__nix-os__help__options_commands] )) ||
+_nixctl__nix-os__help__options_commands() {
+    local commands; commands=()
+    _describe -t commands 'nixctl nix-os help options commands' commands "$@"
+}
+(( $+functions[_nixctl__nix-os__options_commands] )) ||
+_nixctl__nix-os__options_commands() {
+    local commands; commands=()
+    _describe -t commands 'nixctl nix-os options commands' commands "$@"
+}
+(( $+functions[_nixctl__help__home-manager__rebuild_commands] )) ||
+_nixctl__help__home-manager__rebuild_commands() {
+    local commands; commands=()
+    _describe -t commands 'nixctl help home-manager rebuild commands' commands "$@"
+}
+(( $+functions[_nixctl__help__nix-os__rebuild_commands] )) ||
+_nixctl__help__nix-os__rebuild_commands() {
+    local commands; commands=()
+    _describe -t commands 'nixctl help nix-os rebuild commands' commands "$@"
+}
+(( $+functions[_nixctl__home-manager__help__rebuild_commands] )) ||
+_nixctl__home-manager__help__rebuild_commands() {
+    local commands; commands=()
+    _describe -t commands 'nixctl home-manager help rebuild commands' commands "$@"
+}
+(( $+functions[_nixctl__home-manager__rebuild_commands] )) ||
+_nixctl__home-manager__rebuild_commands() {
+    local commands; commands=()
+    _describe -t commands 'nixctl home-manager rebuild commands' commands "$@"
+}
+(( $+functions[_nixctl__nix-os__help__rebuild_commands] )) ||
+_nixctl__nix-os__help__rebuild_commands() {
+    local commands; commands=()
+    _describe -t commands 'nixctl nix-os help rebuild commands' commands "$@"
+}
+(( $+functions[_nixctl__nix-os__rebuild_commands] )) ||
+_nixctl__nix-os__rebuild_commands() {
+    local commands; commands=()
+    _describe -t commands 'nixctl nix-os rebuild commands' commands "$@"
+}
+(( $+functions[_nixctl__help__home-manager__rollback_commands] )) ||
+_nixctl__help__home-manager__rollback_commands() {
+    local commands; commands=()
+    _describe -t commands 'nixctl help home-manager rollback commands' commands "$@"
+}
+(( $+functions[_nixctl__help__nix-os__rollback_commands] )) ||
+_nixctl__help__nix-os__rollback_commands() {
+    local commands; commands=()
+    _describe -t commands 'nixctl help nix-os rollback commands' commands "$@"
+}
+(( $+functions[_nixctl__home-manager__help__rollback_commands] )) ||
+_nixctl__home-manager__help__rollback_commands() {
+    local commands; commands=()
+    _describe -t commands 'nixctl home-manager help rollback commands' commands "$@"
+}
+(( $+functions[_nixctl__home-manager__rollback_commands] )) ||
+_nixctl__home-manager__rollback_commands() {
+    local commands; commands=()
+    _describe -t commands 'nixctl home-manager rollback commands' commands "$@"
+}
+(( $+functions[_nixctl__nix-os__help__rollback_commands] )) ||
+_nixctl__nix-os__help__rollback_commands() {
+    local commands; commands=()
+    _describe -t commands 'nixctl nix-os help rollback commands' commands "$@"
+}
+(( $+functions[_nixctl__nix-os__rollback_commands] )) ||
+_nixctl__nix-os__rollback_commands() {
+    local commands; commands=()
+    _describe -t commands 'nixctl nix-os rollback commands' commands "$@"
+}
+(( $+functions[_nixctl__help__home-manager__test_commands] )) ||
+_nixctl__help__home-manager__test_commands() {
+    local commands; commands=()
+    _describe -t commands 'nixctl help home-manager test commands' commands "$@"
+}
+(( $+functions[_nixctl__help__nix-os__test_commands] )) ||
+_nixctl__help__nix-os__test_commands() {
+    local commands; commands=()
+    _describe -t commands 'nixctl help nix-os test commands' commands "$@"
+}
+(( $+functions[_nixctl__home-manager__help__test_commands] )) ||
+_nixctl__home-manager__help__test_commands() {
+    local commands; commands=()
+    _describe -t commands 'nixctl home-manager help test commands' commands "$@"
+}
+(( $+functions[_nixctl__home-manager__test_commands] )) ||
+_nixctl__home-manager__test_commands() {
+    local commands; commands=()
+    _describe -t commands 'nixctl home-manager test commands' commands "$@"
+}
+(( $+functions[_nixctl__nix-os__help__test_commands] )) ||
+_nixctl__nix-os__help__test_commands() {
+    local commands; commands=()
+    _describe -t commands 'nixctl nix-os help test commands' commands "$@"
+}
+(( $+functions[_nixctl__nix-os__test_commands] )) ||
+_nixctl__nix-os__test_commands() {
+    local commands; commands=()
+    _describe -t commands 'nixctl nix-os test commands' commands "$@"
+}
+(( $+functions[_nixctl__help__home-manager__update_commands] )) ||
+_nixctl__help__home-manager__update_commands() {
+    local commands; commands=()
+    _describe -t commands 'nixctl help home-manager update commands' commands "$@"
+}
+(( $+functions[_nixctl__help__nix-os__update_commands] )) ||
+_nixctl__help__nix-os__update_commands() {
+    local commands; commands=()
+    _describe -t commands 'nixctl help nix-os update commands' commands "$@"
+}
+(( $+functions[_nixctl__home-manager__help__update_commands] )) ||
+_nixctl__home-manager__help__update_commands() {
+    local commands; commands=()
+    _describe -t commands 'nixctl home-manager help update commands' commands "$@"
+}
+(( $+functions[_nixctl__home-manager__update_commands] )) ||
+_nixctl__home-manager__update_commands() {
+    local commands; commands=()
+    _describe -t commands 'nixctl home-manager update commands' commands "$@"
+}
+(( $+functions[_nixctl__nix-os__help__update_commands] )) ||
+_nixctl__nix-os__help__update_commands() {
+    local commands; commands=()
+    _describe -t commands 'nixctl nix-os help update commands' commands "$@"
+}
+(( $+functions[_nixctl__nix-os__update_commands] )) ||
+_nixctl__nix-os__update_commands() {
+    local commands; commands=()
+    _describe -t commands 'nixctl nix-os update commands' commands "$@"
+}
+(( $+functions[_nixctl__help__home-manager__upgrade_commands] )) ||
+_nixctl__help__home-manager__upgrade_commands() {
+    local commands; commands=()
+    _describe -t commands 'nixctl help home-manager upgrade commands' commands "$@"
+}
+(( $+functions[_nixctl__help__nix-os__upgrade_commands] )) ||
+_nixctl__help__nix-os__upgrade_commands() {
+    local commands; commands=()
+    _describe -t commands 'nixctl help nix-os upgrade commands' commands "$@"
+}
+(( $+functions[_nixctl__home-manager__help__upgrade_commands] )) ||
+_nixctl__home-manager__help__upgrade_commands() {
+    local commands; commands=()
+    _describe -t commands 'nixctl home-manager help upgrade commands' commands "$@"
+}
+(( $+functions[_nixctl__home-manager__upgrade_commands] )) ||
+_nixctl__home-manager__upgrade_commands() {
+    local commands; commands=()
+    _describe -t commands 'nixctl home-manager upgrade commands' commands "$@"
+}
+(( $+functions[_nixctl__nix-os__help__upgrade_commands] )) ||
+_nixctl__nix-os__help__upgrade_commands() {
+    local commands; commands=()
+    _describe -t commands 'nixctl nix-os help upgrade commands' commands "$@"
+}
+(( $+functions[_nixctl__nix-os__upgrade_commands] )) ||
+_nixctl__nix-os__upgrade_commands() {
+    local commands; commands=()
+    _describe -t commands 'nixctl nix-os upgrade commands' commands "$@"
 }
 
 if [ "$funcstack[1]" = "_nixctl" ]; then
