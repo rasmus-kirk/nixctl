@@ -1,56 +1,51 @@
 {
   description = "Flake for nixctl";
-  inputs.flake-utils.url = "github:numtide/flake-utils";
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
-  outputs = {
-    self,
-    flake-utils,
-    nixpkgs,
-  }:
-    flake-utils.lib.eachDefaultSystem (
-      system: let
-        pkgs = nixpkgs.legacyPackages.${system};
-      in rec {
-        devShells.default = with pkgs;
-          mkShell {
-            packages = [
-              git
-              cargo
-              rustc
-              rustfmt
-              rust-analyzer
-              nvd
-              nix-output-monitor
-            ];
-          };
-        packages = rec {
-          nixctl = pkgs.rustPlatform.buildRustPackage rec {
-            name = "nixctl";
-            version = "1.0.0";
-            src = nixpkgs.lib.cleanSource ./.;
-            cargoLock = {
-              lockFile = ./Cargo.lock;
-            };
-            runtimeDeps = with pkgs; [nvd nix-output-monitor];
-            nativeBuildInputs = [pkgs.installShellFiles];
-            postInstall = ''
-              installShellCompletion --cmd nixctl \
-                --bash completions/nixctl.bash \
-                --fish completions/nixctl.fish \
-                --zsh completions/_nixctl
-            '';
-          };
-          combinedPackages = pkgs.symlinkJoin {
-            name = "combined-packages";
-            paths = [
-              pkgs.nvd
-              pkgs.nix-output-monitor
-              nixctl
-            ];
-          };
+  inputs.nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
 
-          default = packages.combinedPackages;
+  outputs = { self, nixpkgs }:
+    let
+      allSystems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
+      forAllSystems = f: nixpkgs.lib.genAttrs allSystems (system: f {
+        pkgs = import nixpkgs {
+          inherit system;
         };
-      }
-    );
+      });
+    in
+    {
+      devShells = forAllSystems ({ pkgs } : {
+        default = pkgs.mkShell {
+          buildInputs = with pkgs; [
+            git
+            cargo
+            rustc
+            rustfmt
+            rust-analyzer
+            nvd
+            nix-output-monitor
+          ];
+        };
+      });
+
+      packages = forAllSystems ({ pkgs }: rec {
+        nixctl = let
+          manifest = (pkgs.lib.importTOML ./Cargo.toml).package;
+        in pkgs.rustPlatform.buildRustPackage {
+          meta.mainProgram = "nixctl";
+          name = manifest.name;
+          version = manifest.version;
+          src = self;
+          cargoLock.lockFile = ./Cargo.lock;
+          runtimeDeps = with pkgs; [trash-cli];
+          nativeBuildInputs = [pkgs.installShellFiles];
+          postInstall = ''
+            installShellCompletion --cmd nixctl \
+              --bash completions/nixctl.bash \
+              --fish completions/nixctl.fish \
+              --zsh completions/_nixctl
+          '';
+        };
+        default = nixctl;
+      });
+    };
+
 }

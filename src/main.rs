@@ -18,7 +18,6 @@ struct AppConfig {
     machine: Option<String>,
     config_dir: Option<PathBuf>,
     impure: Option<bool>,
-    debug: Option<bool>,
 }
 
 /// nixctl: A CLI wrapper around Nix, NixOS, and Home Manager commands.
@@ -43,9 +42,6 @@ pub struct Args {
 
     #[arg(long, env = "IMPURE", default_value_t = false)]
     impure: bool,
-
-    #[arg(long, env = "DEBUG", default_value_t = false)]
-    debug: bool,
 
     #[command(subcommand)]
     cmd: Commands,
@@ -128,7 +124,6 @@ fn main() -> anyhow::Result<()> {
         .build()?
         .try_deserialize::<AppConfig>()?;
 
-    println!("Loaded config: {:#?}", settings);
     let config_dir = settings.config_dir.unwrap();
     let machine = settings.machine.unwrap();
     let impure = match settings.impure {
